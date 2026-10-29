@@ -299,6 +299,25 @@ Questions, permission requests and bug reports go to the ASTRO repository's issu
 (`github.com/smking89/Astro`). When an answer changes how the API behaves, it is written into this file in the same
 commit, so this page — not a chat thread — stays the source of truth.
 
+### 13. Pick a sign-in shape and know how it fails
+
+Both shapes start at `https://astrocan.io/account`, and both need the exact `redirect_uri` registered against the app in
+`developer.astrocan.io`. Choose the popup only when the screen must stay mounted: a server-rendered app is simpler with
+the redirect, and the redirect still works when a browser blocks the popup.
+
+| Symptom | Almost always | Fix |
+| --- | --- | --- |
+| "This sign-in could not start" | The `redirect_uri` differs from the registered value by a trailing slash, a query string, `www`, or `http` instead of `https` | Register the exact URL; matching is exact, never a prefix |
+| "missing its state value" | The link was built without `state` | Generate one value per attempt, store it in the session, send it |
+| The popup opens, then closes with nothing handed back | The opener was lost, or the listener was attached after the message arrived | Attach the listener before `window.open`, and fall back to the redirect when it returns `null` |
+| A message arrives but is ignored | The origin or `source` check rejected it | Compare `event.origin` with the registered origin, and require `event.data.source === "astrocan"` |
+| The callback renders a blank page | The callback route reads the request body instead of the query string | Read `state`, `handle` and `astroId` from the URL |
+| Signed in, but the app never received the account | The account is suspended, so nothing is handed back on purpose | Show the suspension to the member; do not retry |
+| Works locally, refused in production | A loopback `redirect_uri` is registered for the production app | Loopback is accepted only for `localhost` and `127.0.0.1` over `http`; everything else must be `https` |
+
+A failed sign-in never posts to the opener: the window closes and the app keeps waiting. Treat a popup that closes
+without a message as a cancellation, and keep a visible "Sign in with ASTRO" button so the member can start again.
+
 ## Using the account layer directly
 
 Keys cover HTTP access. A product inside the ecosystem can also link the package and skip the network:
