@@ -55,9 +55,14 @@ return Response.redirect(url, 303);
 On the callback, compare the returned `state` with the stored one before trusting anything else, then exchange the
 result for a session of your own. A return that does not match the stored `state` is a dropped sign-in, not a user.
 
+The return is your registered URL with three query parameters: `state` (the value you sent), `handle` and `astroId`.
+Nothing else is appended, and no other account field travels in the URL.
+
 ### Popup
 
-Add `mode=popup` to the same URL. The account page posts one message to the opener and closes itself.
+Add `mode=popup` to the same URL. The account page posts one message to the opener and closes itself. The message is
+`{ source: "astrocan", state, account: { handle, astroId } }` — without an `error` key, because a failed sign-in closes
+the window without posting at all.
 
 ```ts
 const url = new URL("https://astrocan.io/account");
