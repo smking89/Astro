@@ -1,0 +1,121 @@
+// ASTRO account layer — shared identity, wallet and profile connections.
+// Owned by github.com/smking89/Astro; consumed by Bleek, Koba.games and SnagChat.
+
+// <astro:standalone>
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+// </astro:standalone>
+
+enum PlatformType {
+  BEEK
+  KOBA_GAMES
+  SNAGCHAT
+}
+
+/// Staff role inside the ASTRO operations console. Null on ordinary members.
+
+enum StaffRole {
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model User {
+  id          String   @id @default(cuid())
+  handle      String   @unique
+  /// Tamper-evident identifier minted once at registration and verified by every ASTRO product.
+  astroId     String?  @unique
+  displayName String
+  avatarUrl   String?
+  headline    String?
+  bio         String?
+  /// Hex accent used for the profile ring, e.g. "#5865f2".
+  accentColor String?  @db.Char(7)
+  /// scrypt hash for handle + password sign-in; null when the account predates credentials.
+  passwordHash String?
+  /// Staff role in the operations console; null for ordinary members.
+  staffRole        StaffRole?
+  staffTitle       String?
+  staffSince       DateTime?
+  status           AccountStatus @default(ACTIVE)
+  suspendedAt      DateTime?
+  suspendedReason  String?
+  lastSeenAt       DateTime?
+  /// Set when staff verify that this handle belongs to the account it claims.
+  handleVerifiedAt DateTime?
+  // @astro:user-relations
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  wallet        AccountWallet?
+  connections   UserConnection[]
+
+  @@index([createdAt])
+  @@index([displayName])
+  @@index([staffRole])
+  @@index([status])
+  @@index([handleVerifiedAt])
+  @@map("users")
+}
+
+/// One wallet per user. Every product debits and credits this same row.
+
+model AccountWallet {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  /// Spendable balance. The migration adds CHECK ("coins" >= 0).
+  coins          Int      @default(0)
+  lifetimeEarned Int      @default(0)
+  lifetimeSpent  Int      @default(0)
+  /// Bumped on every write so concurrent product clients can detect a lost update.
+  version        Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("account_wallets")
+}
+
+/// A profile link chip pointing at one of the three ASTRO products.
+
+model UserConnection {
+  id               String       @id @default(cuid())
+  userId           String
+  platform         PlatformType
+  /// Exactly as the member typed it, minus a leading "@".
+  handle           String
+  /// Lowercased handle, or digits-only for WhatsApp. Every lookup uses this column.
+  handleNormalized String
+  /// Shown first in the profile row.
+  isPrimary        Boolean      @default(false)
+  isVerified       Boolean      @default(false)
+  /// Manual drag order inside the chip row.
+  sortOrder        Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  /// A handle belongs to at most one ASTRO account per platform, so a product
+  /// nickname can never be claimed twice. Also serves the resolve-by-handle lookup.
+  @@unique([platform, handleNormalized])
+  /// Fast fetch of one profile row in display order.
+  @@index([userId, sortOrder])
+  /// Fast per-platform counts and verification sweeps.
+  @@index([platform])
+  @@map("user_connections")
+}
+
+/// A third-party ASTRO integration. Owned by one account, authenticated by one key.

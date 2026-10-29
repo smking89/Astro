@@ -1,0 +1,38 @@
+{
+  "name": "@astro/core",
+  "version": "0.2.0",
+  "private": true,
+  "description": "ASTRO account layer: one identity, one wallet and profile connections shared by Bleek, Koba.games and SnagChat.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./accounts": "./src/accounts.ts",
+    "./auth": "./src/auth.ts",
+    "./db": "./src/db.ts",
+    "./errors": "./src/errors.ts",
+    "./http": "./src/http.ts",
+    "./id": "./src/id.ts",
+    "./links": "./src/links.ts",
+    "./react/connections": "./src/react/connections.tsx",
+    "./react/editor": "./src/react/editor.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:deploy": "prisma migrate deploy",
+    "db:baseline": "prisma migrate diff --from-empty --to-schema-datamodel prisma/astro.prisma --script"
+  },
+  "peerDependencies": {
+    "@prisma/client": ">=6",
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.19.3",
+    "@types/react": "^19.1.13",
+    "next": "^15.5.4",
+    "prisma": "^6.19.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.2"
+  }
+}
