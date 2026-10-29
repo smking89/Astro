@@ -1,7 +1,9 @@
 # Astrocan developer platform
 
-`astrocan.io` is the single front door for developers across the ASTRO ecosystem. An app registers once and its key
-works against the shared account layer — the same `User`, `AccountWallet` and `UserConnection` rows every product reads.
+Astrocan is the single front door for developers across the ASTRO ecosystem, and it answers on two hosts:
+`astrocan.io` is the landing page and serves the account screen at `/account`, and `developer.astrocan.io` is the portal
+where apps and keys are managed. An app registers once and its key works against the shared account layer — the same
+`User`, `AccountWallet` and `UserConnection` rows every product reads.
 
 Products do not ship their own portals. Bleek's former `/developers` routes now redirect to `/astro`; its deployment keeps
 serving the metered API those keys call, and its staff console keeps a read-only view of issued keys.
@@ -23,6 +25,62 @@ Authorization: Bearer astro_sk_…
 
 A missing header is `401 MISSING_KEY`. Unknown, revoked and rotated keys all return `401 INVALID_KEY`, so a response
 never confirms whether a key exists. A key owned by a suspended account returns `403 ACCOUNT_SUSPENDED`.
+
+## Signing users in
+
+Every sign-in happens on `https://astrocan.io/account`, where the member either signs in with an ASTRO account or
+registers a new one. No integration collects an ASTRO password, and no integration needs to build a login form: you
+choose one of two shapes and hand the browser over.
+
+| Shape | Use it when | What the member sees |
+| --- | --- | --- |
+| Redirect | Server-rendered apps, mobile web, anything that already owns a callback route | Your app leaves the screen, the account page loads, and the browser returns to your `redirect_uri` |
+| Popup | Desktop shells and single-page apps that must keep the current screen mounted | A small window over your app, which closes itself when the member is done |
+
+Both shapes carry the same two parameters: the exact `redirect_uri` you registered for the app, and a `state` value you
+generate and later compare. The account page refuses an unregistered `redirect_uri` instead of forwarding to it.
+
+### Redirect
+
+```ts
+const state = crypto.randomUUID();
+await storeStateInSession(state);
+
+const url = new URL("https://astrocan.io/account");
+url.searchParams.set("redirect_uri", "https://koba.games/auth/astro/callback");
+url.searchParams.set("state", state);
+return Response.redirect(url, 303);
+```
+
+On the callback, compare the returned `state` with the stored one before trusting anything else, then exchange the
+result for a session of your own. A return that does not match the stored `state` is a dropped sign-in, not a user.
+
+### Popup
+
+Add `mode=popup` to the same URL. The account page posts one message to the opener and closes itself.
+
+```ts
+const url = new URL("https://astrocan.io/account");
+url.searchParams.set("redirect_uri", "https://snag.chat/auth/astro/callback");
+url.searchParams.set("state", state);
+url.searchParams.set("mode", "popup");
+
+const popup = window.open(url.toString(), "astro-signin", "width=520,height=720");
+if (!popup) return startRedirectSignIn(state); // blocked: fall back instead of showing a dead button
+
+const onMessage = (event: MessageEvent) => {
+  if (event.origin !== "https://astrocan.io") return;
+  if (event.data?.source !== "astrocan" || event.data?.state !== state) return;
+  window.removeEventListener("message", onMessage);
+  if (event.data.error) return showSignInError(event.data.error);
+  acceptAccount(event.data.account);
+};
+window.addEventListener("message", onMessage);
+```
+
+Check `event.origin` before reading the payload, and match `state` before accepting it — a popup message is untrusted
+input like any other. Remove the listener once it fires, and treat a closed popup without a message as a cancellation
+rather than an error.
 
 ## Scopes
 

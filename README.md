@@ -27,9 +27,10 @@ and integration follows them: the same guidelines render at `/astro/brand` on th
 
 ## Developer portal
 
-Astrocan, at `astrocan.io`, is the only place API keys are issued. [DEVELOPERS.md](DEVELOPERS.md) documents
-registration, key handling, scopes, endpoints, quotas and errors. Products do not ship their own portal; Bleek's former
-`/developers` routes redirect to `/astro`.
+Astrocan is the developer platform, and it lives on two hosts: `astrocan.io` is the landing page and hosts the account
+screen at `/account`, while `developer.astrocan.io` is the portal where API keys are issued. [DEVELOPERS.md](DEVELOPERS.md)
+documents registration, key handling, sign-in, scopes, endpoints, quotas and errors. Products do not ship their own
+portal; Bleek's former `/developers` routes redirect to `/astro`.
 
 ## KOBAbot
 
