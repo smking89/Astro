@@ -1,6 +1,6 @@
-# ASTRO developer platform
+# Astrocan developer platform
 
-`developer.astro.io` is the single front door for developers across the ASTRO ecosystem. An app registers once and its key
+`astrocan.io` is the single front door for developers across the ASTRO ecosystem. An app registers once and its key
 works against the shared account layer — the same `User`, `AccountWallet` and `UserConnection` rows every product reads.
 
 Products do not ship their own portals. Bleek's former `/developers` routes now redirect to `/astro`; its deployment keeps
