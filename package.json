@@ -1,8 +1,8 @@
 {
   "name": "@astro/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "ASTRO account layer: one identity, one wallet and profile connections shared by Bleek, Koba.games and SnagChat.",
+  "description": "ASTRO account layer: one identity, one wallet and profile connections shared by Bleek, Koba.games, SnagChat and KOBAbot.",
   "type": "module",
   "sideEffects": false,
   "exports": {

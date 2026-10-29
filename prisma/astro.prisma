@@ -16,6 +16,8 @@ enum PlatformType {
   BEEK
   KOBA_GAMES
   SNAGCHAT
+  /// The Discord bot. Handles are numeric Discord user IDs so the bot can match an ASTRO account exactly.
+  KOBABOT
 }
 
 /// Staff role inside the ASTRO operations console. Null on ordinary members.

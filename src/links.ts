@@ -1,13 +1,13 @@
 /**
  * Deep-link generation for ASTRO profile connections.
  *
- * Every destination is an ASTRO-owned product, so this module knows only the three
+ * Every destination is an ASTRO-owned product, so this module knows only the four
  * internal platforms. The PlatformType union mirrors the Prisma enum exactly while
  * staying usable from client components (the generated Prisma client never enters
  * the browser bundle).
  */
 
-export const PLATFORMS = ["BEEK", "KOBA_GAMES", "SNAGCHAT"] as const;
+export const PLATFORMS = ["BEEK", "KOBA_GAMES", "SNAGCHAT", "KOBABOT"] as const;
 
 export type PlatformType = (typeof PLATFORMS)[number];
 
@@ -18,12 +18,16 @@ export type PlatformMeta = {
   badge: string;
   /** Origin that every link for this platform hangs off. */
   origin: string;
+  /** Path that renders this platform's profile for an already-encoded handle. */
+  profilePath: (handle: string) => string;
 };
 
 export const PLATFORM_META: Record<PlatformType, PlatformMeta> = {
-  BEEK: { label: "Bleek", badge: "BK", origin: "https://bleek.app" },
-  KOBA_GAMES: { label: "Koba.games", badge: "KG", origin: "https://koba.games" },
-  SNAGCHAT: { label: "SnagChat", badge: "SC", origin: "https://snag.chat" },
+  BEEK: { label: "Bleek", badge: "BK", origin: "https://bleek.app", profilePath: (handle) => `/@${handle}` },
+  KOBA_GAMES: { label: "Koba.games", badge: "KG", origin: "https://koba.games", profilePath: (handle) => `/@${handle}` },
+  SNAGCHAT: { label: "SnagChat", badge: "SC", origin: "https://snag.chat", profilePath: (handle) => `/@${handle}` },
+  // Discord resolves profiles by numeric user ID, which is the same key KOBAbot uses to match a member.
+  KOBABOT: { label: "KOBAbot", badge: "KB", origin: "https://discord.com", profilePath: (handle) => `/users/${handle}` },
 };
 
 /** Raised when a handle cannot produce a valid destination. */
@@ -85,7 +89,8 @@ export function generateASTROLink(platform: PlatformType, handle: string): strin
   }
 
   const value = normalizeHandle(platform, handle);
-  return `${PLATFORM_META[platform].origin}/@${encodeURIComponent(value)}`;
+  const meta = PLATFORM_META[platform];
+  return `${meta.origin}${meta.profilePath(encodeURIComponent(value))}`;
 }
 
 /** Never throws: returns null when stored data cannot form a valid link. */

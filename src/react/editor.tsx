@@ -9,6 +9,7 @@ const PLACEHOLDER: Record<PlatformType, string> = {
   BEEK: "@koba",
   KOBA_GAMES: "@koba.games",
   SNAGCHAT: "@koba.reels",
+  KOBABOT: "123456789012345678",
 };
 
 /** Connect and remove chips; the server component re-renders from PostgreSQL. */

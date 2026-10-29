@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
-CREATE TYPE "PlatformType" AS ENUM ('BEEK', 'KOBA_GAMES', 'SNAGCHAT');
+CREATE TYPE "PlatformType" AS ENUM ('BEEK', 'KOBA_GAMES', 'SNAGCHAT', 'KOBABOT');
 
 -- CreateEnum
 CREATE TYPE "StaffRole" AS ENUM ('MODERATOR', 'ADMIN', 'SUPER_ADMIN');
