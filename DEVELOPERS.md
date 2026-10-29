@@ -318,6 +318,12 @@ the redirect, and the redirect still works when a browser blocks the popup.
 A failed sign-in never posts to the opener: the window closes and the app keeps waiting. Treat a popup that closes
 without a message as a cancellation, and keep a visible "Sign in with ASTRO" button so the member can start again.
 
+One case skips the registry: Astrocan's own pages under `/astro/` on the host that serves `/account` are first-party, so
+they are accepted without a row and report their name as "Astrocan". Every other app — including the products in this
+ecosystem — registers its exact URI. You can watch both shapes run on `astrocan.io`: one button on its landing page opens
+the popup, checks the origin and state, and prints the handle and ASTROid it received; the other sends the same handoff
+as a full-page redirect, which lands on the callback page with `state`, `handle` and `astroId` on the query string.
+
 ## Using the account layer directly
 
 Keys cover HTTP access. A product inside the ecosystem can also link the package and skip the network:
