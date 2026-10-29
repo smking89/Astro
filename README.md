@@ -1,6 +1,6 @@
 # ASTRO
 
-The account layer behind Bleek, Koba.games, SnagChat and KOBAbot: one identity, one coin wallet, and a Meta-style
+The account layer behind Bleek, Koba.games, SnagChat and KOBAbot: one identity, one coin wallet, and one
 row of profile connections pointing at each product.
 
 This repository owns the shared pieces. The products own their own UI, servers and moderation; they all read the same
@@ -33,15 +33,15 @@ registration, key handling, scopes, endpoints, quotas and errors. Products do no
 
 ## KOBAbot
 
-KOBAbot is the Discord bot. A member links their Discord user ID as a `KOBABOT` connection, and the bot resolves that
-ID to an ASTRO account and checks the account's ASTROid before acting on a command. The chip deep-links to
-`https://discord.com/users/<id>`, so it points at the real Discord profile rather than a guessable username.
+KOBAbot is the chat bot for community servers. A member links their KOBAbot ID as a `KOBABOT` connection, and the
+bot resolves that ID to an ASTRO account and checks the account's ASTROid before acting on a command. The chip
+deep-links to `https://koba.games/kobabot/users/<id>`, so it points at that profile rather than a guessable username.
 
 ```ts
 import { verifyAstroId } from "@astro/core/id";
 ```
 
-Nothing in the bot trusts a Discord nickname on its own: the identifier is the numeric ID, and the ASTROid signature
+Nothing in the bot trusts a display name on its own: the identifier is the numeric ID, and the ASTROid signature
 proves ASTRO issued it.
 
 ## Schema

@@ -29,7 +29,7 @@ const FOCUS_RING =
   "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
 /**
- * The Meta-style profile link row. Renders on a #000000 surface; every chip is a
+ * The profile link row. Renders on a #000000 surface; every chip is a
  * #111214 container with a hairline border, no glow and no gradient overlays.
  */
 export function ProfileConnectionRow({

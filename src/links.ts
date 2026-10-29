@@ -26,8 +26,8 @@ export const PLATFORM_META: Record<PlatformType, PlatformMeta> = {
   BEEK: { label: "Bleek", badge: "BK", origin: "https://bleek.app", profilePath: (handle) => `/@${handle}` },
   KOBA_GAMES: { label: "Koba.games", badge: "KG", origin: "https://koba.games", profilePath: (handle) => `/@${handle}` },
   SNAGCHAT: { label: "SnagChat", badge: "SC", origin: "https://snag.chat", profilePath: (handle) => `/@${handle}` },
-  // Discord resolves profiles by numeric user ID, which is the same key KOBAbot uses to match a member.
-  KOBABOT: { label: "KOBAbot", badge: "KB", origin: "https://discord.com", profilePath: (handle) => `/users/${handle}` },
+  // KOBAbot matches members on their numeric ID, so the chip points at that profile.
+  KOBABOT: { label: "KOBAbot", badge: "KB", origin: "https://koba.games/kobabot", profilePath: (handle) => `/users/${handle}` },
 };
 
 /** Raised when a handle cannot produce a valid destination. */

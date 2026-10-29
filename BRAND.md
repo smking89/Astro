@@ -76,7 +76,7 @@ use tabular numerals.
 | Section | 20px / 28px | 600 | −0.01em | Page and panel titles |
 | Body | 13px / 24px | 400 | 0 | Explanatory copy, form labels |
 | Chat | 16px / 22px | 400 | 0 | Message content in Bleek |
-| Meta | 11–12px / 16px | 500 | 0.14em uppercase | Eyebrows, table heads, captions |
+| Label | 11–12px / 16px | 500 | 0.14em uppercase | Eyebrows, table heads, captions |
 | Mono | 11.5–12px / 20px | 500 | 0 | ASTROid, keys, code; tabular numerals for balances |
 
 Do not letterspace body copy or messages, centre paragraphs, set product UI below 11px, or fall back to the operating
