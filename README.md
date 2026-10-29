@@ -20,6 +20,11 @@ This repository owns the shared pieces. The products own their own UI, servers a
 | `@astro/core/react/connections` | `ProfileConnectionRow`, the wrapping pill row with verified marks and the dotted `+ Add` chip. |
 | `@astro/core/react/editor` | `ProfileEditor`, the connect/remove form that writes through the consuming app's routes. |
 
+## Brand
+
+The mark, colour, type, sign-in control, naming and ASTROid display rules live in [BRAND.md](BRAND.md). Every product
+and integration follows them: the same guidelines render at `/astro/brand` on the ASTRO host.
+
 ## KOBAbot
 
 KOBAbot is the Discord bot. A member links their Discord user ID as a `KOBABOT` connection, and the bot resolves that
@@ -81,6 +86,7 @@ Tailwind v4 ignores `node_modules` when scanning, so register the source explici
 
 - `DATABASE_URL` — PostgreSQL connection string.
 - `ASTRO_AUTH_SECRET` — 32+ random characters, used to sign session tokens.
+- `ASTRO_ID_SECRET` — 32+ random characters, used to sign ASTROids. Rotating it invalidates every existing ASTROid.
 
 ## Development
 
