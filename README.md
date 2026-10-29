@@ -25,6 +25,12 @@ This repository owns the shared pieces. The products own their own UI, servers a
 The mark, colour, type, sign-in control, naming and ASTROid display rules live in [BRAND.md](BRAND.md). Every product
 and integration follows them: the same guidelines render at `/astro/brand` on the ASTRO host.
 
+## Developer platform
+
+The portal at `developer.astro.io` is the only place API keys are issued. [DEVELOPERS.md](DEVELOPERS.md) documents
+registration, key handling, scopes, endpoints, quotas and errors. Products do not ship their own portal; Bleek's former
+`/developers` routes redirect to `/astro`.
+
 ## KOBAbot
 
 KOBAbot is the Discord bot. A member links their Discord user ID as a `KOBABOT` connection, and the bot resolves that
